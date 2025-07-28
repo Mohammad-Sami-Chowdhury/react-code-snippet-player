@@ -77,14 +77,35 @@ export default function App() {
 
 ## Props
 
-Prop Type Default Description
+**tabs**
+Type: Array
+Default: Required
+Description: Array of tab objects
 
-tabs Array Required Array of tab objects
-theme Object duotoneDark Syntax highlighting theme
-autoSwitch Boolean false Enable automatic tab switching
-typingSpeed Number 30 Typing animation speed (ms)
-switchDelay Number 10000 Delay between auto-switches (ms)
-className String "" Additional CSS classes
+**theme**
+Type: Object
+Default: duotoneDark
+Description: Syntax highlighting theme
+
+**autoSwitch**
+Type: Boolean
+Default: false
+Description: Enable automatic tab switching
+
+**typingSpeed**
+Type: Number
+Default: 30
+Description: Typing animation speed in milliseconds
+
+**switchDelay**
+Type: Number
+Default: 10000
+Description: Delay between auto-switches in milliseconds
+
+**className**
+Type: String
+Default: ""
+Description: Additional CSS classes
 
 ## 🎨 Customization
 
@@ -107,4 +128,24 @@ import {
 
 ## 📄 License
 
-MIT © Mohammad Sami Chowdhury
+MIT License
+
+Copyright (c) 2025 Mohammad Sami Chowdhury
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
+copies of the Software, and to permit persons to whom the Software is  
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in  
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
+THE SOFTWARE.
