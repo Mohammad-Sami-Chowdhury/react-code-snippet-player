@@ -4,7 +4,7 @@ A beautiful, animated React component to display code snippets with elegant tabs
 
 ## Demo
 
-[Demo](https://codesandbox.io/p/github/Mohammad-Sami-Chowdhury/react-code-snippet-player/draft/kind-matan?workspaceId=ws_2HjZbLtvJbyPR4Db5JaYyX)
+[Demo](https://codesandbox.io/p/sandbox/9tj38q?file=%2Fpackage.json%3A54%2C2)
 
 ## 🌟 Features
 
