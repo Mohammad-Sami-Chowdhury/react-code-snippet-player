@@ -25,15 +25,6 @@ yarn add react-code-snippet-player
 
 ```
 
-## Peer Dependencies
-
-- **You need to install**
-
-```bash
-npm install react react-dom framer-motion react-syntax-highlighter react-icons
-
-```
-
 ## 🧑‍💻 Basic Usage
 
 ```jsx
