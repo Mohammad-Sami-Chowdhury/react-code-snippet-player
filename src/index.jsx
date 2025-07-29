@@ -1,2 +1,5 @@
-// src/index.jsx
-export { default } from "./CodeSnippetsPlayer";
+import CodeSnippetPlayer from "./CodeSnippetsPlayer";
+import { Themes } from "./Themes";
+
+export default CodeSnippetPlayer;
+export { Themes };

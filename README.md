@@ -38,37 +38,66 @@ npm install react react-dom framer-motion react-syntax-highlighter react-icons
 
 ```jsx
 import React from "react";
-import CodeSnippetPlayer from "react-code-snippet-player";
-import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { SiReact, SiJavascript } from "react-icons/si";
+import { SiTypescript, SiReact, SiNextdotjs } from "react-icons/si";
+import CodeSnippetPlayer, { Themes } from "react-code-snippet-player";
+
+// Define styles as constants
+const styles = {
+  appContainer: {
+    height: "100vh",
+    backgroundColor: "#0b0a12",
+    color: "white",
+  },
+  icon: {
+    size: 24,
+  },
+};
 
 const tabs = [
   {
+    id: "typescript",
+    label: "TypeScript",
+    icon: <SiTypescript size={styles.icon.size} />,
+    language: "ts",
+    code: `// TypeScript example
+function greet(name: string): string {
+  return \`Hello, \${name}!\`;
+}
+console.log(greet("Sami"));`,
+  },
+  {
     id: "react",
     label: "React",
-    icon: <SiReact className="text-blue-500" />,
+    icon: <SiReact size={styles.icon.size} />,
     language: "jsx",
-    code: `function Hello() {
-  return <h1>Hello World</h1>;
+    code: `// React example
+import React from "react";
+
+export default function Hello() {
+  return <h1>Hello React!</h1>;
 }`,
   },
   {
-    id: "js",
-    label: "JavaScript",
-    icon: <SiJavascript className="text-yellow-500" />,
-    language: "javascript",
-    code: `console.log("Hello World");`,
+    id: "nextjs",
+    label: "Next.js",
+    icon: <SiNextdotjs size={styles.icon.size} />,
+    language: "tsx",
+    code: `// Next.js example
+export default function Home() {
+  return <div>Welcome to Next.js!</div>;
+}`,
   },
 ];
 
 export default function App() {
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div>
       <CodeSnippetPlayer
         tabs={tabs}
-        theme={duotoneDark}
+        theme={Themes.vs}
         autoSwitch={true}
-        typingSpeed={50}
+        switchDelay={3000}
+        typingSpeed={10}
       />
     </div>
   );
@@ -107,23 +136,20 @@ Type: String
 Default: ""
 Description: Additional CSS classes
 
-## 🎨 Customization
+## 🎨 Themes
 
 ```jsx
-import {
-  atomDark,
-  dracula,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
-
-<CodeSnippetPlayer tabs={tabs} theme={dracula} />;
+<CodeSnippetPlayer tabs={tabs} theme={Themes.dracula} />
 ```
 
 ## Custom Styling
 
 ```jsx
+import CodeSnippetPlayer, { Themes } from "react-code-snippet-player";
+
 <div className="bg-gray-900 rounded-xl p-2 shadow-2xl">
   <CodeSnippetPlayer tabs={tabs} />
-</div>
+</div>;
 ```
 
 ## 📄 License
