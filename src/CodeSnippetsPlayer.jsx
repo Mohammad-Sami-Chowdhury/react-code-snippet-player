@@ -4,15 +4,6 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const styles = {
-  mainContainer: {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "2rem 1rem",
-    backgroundColor: "#0a0a0a",
-    fontFamily: "'Fira Code', monospace, sans-serif",
-  },
   wrapper: {
     width: "100%",
     maxWidth: "900px",
@@ -200,72 +191,70 @@ export default function CodeSnippetPlayer({
   if (!activeTab) return <div>No tabs provided</div>;
 
   return (
-    <div style={styles.mainContainer}>
-      <div style={styles.wrapper}>
-        <motion.div
-          style={styles.codeEditorContainer}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div style={styles.innerContainer}>
-            <div style={styles.tabsWrapper}>
-              <div
-                style={styles.tabsContainer}
-                ref={(el) => {
-                  if (el) {
-                    setShowScrollShadow(el.scrollWidth > el.clientWidth);
-                  }
-                }}
-              >
-                {tabs.map((tab) => (
-                  <motion.button
-                    key={tab.id}
-                    onClick={() => setActiveTabId(tab.id)}
-                    style={{
-                      ...styles.tabButton,
-                      ...responsiveStyles.tabButton,
-                      ...(activeTabId === tab.id && styles.tabButtonActive),
-                    }}
-                    whileHover={{
-                      backgroundColor: "#333",
-                      color: "#00ffaa",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span style={responsiveStyles.tabIcon}>{tab.icon}</span>
-                    <span style={styles.tabLabel}>{tab.label}</span>
-                  </motion.button>
-                ))}
-              </div>
-              {showScrollShadow && <div style={styles.scrollShadow} />}
-            </div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTabId}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                style={styles.codeDisplayContainer}
-              >
-                <SyntaxHighlighter
-                  language={detectLanguage(activeTab.id, activeTab.language)}
-                  style={theme}
-                  customStyle={getResponsiveStyle()}
-                  showLineNumbers={showLineNumbers}
-                  wrapLines={true}
-                  wrapLongLines={true}
-                  lineNumberStyle={{ color: "#555", minWidth: "2.5em" }}
+    <div style={styles.wrapper}>
+      <motion.div
+        style={styles.codeEditorContainer}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div style={styles.innerContainer}>
+          <div style={styles.tabsWrapper}>
+            <div
+              style={styles.tabsContainer}
+              ref={(el) => {
+                if (el) {
+                  setShowScrollShadow(el.scrollWidth > el.clientWidth);
+                }
+              }}
+            >
+              {tabs.map((tab) => (
+                <motion.button
+                  key={tab.id}
+                  onClick={() => setActiveTabId(tab.id)}
+                  style={{
+                    ...styles.tabButton,
+                    ...responsiveStyles.tabButton,
+                    ...(activeTabId === tab.id && styles.tabButtonActive),
+                  }}
+                  whileHover={{
+                    backgroundColor: "#333",
+                    color: "#00ffaa",
+                  }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {activeTab.code.slice(0, typedIndex)}
-                </SyntaxHighlighter>
-              </motion.div>
-            </AnimatePresence>
+                  <span style={responsiveStyles.tabIcon}>{tab.icon}</span>
+                  <span style={styles.tabLabel}>{tab.label}</span>
+                </motion.button>
+              ))}
+            </div>
+            {showScrollShadow && <div style={styles.scrollShadow} />}
           </div>
-        </motion.div>
-      </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTabId}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={styles.codeDisplayContainer}
+            >
+              <SyntaxHighlighter
+                language={detectLanguage(activeTab.id, activeTab.language)}
+                style={theme}
+                customStyle={getResponsiveStyle()}
+                showLineNumbers={showLineNumbers}
+                wrapLines={true}
+                wrapLongLines={true}
+                lineNumberStyle={{ color: "#555", minWidth: "2.5em" }}
+              >
+                {activeTab.code.slice(0, typedIndex)}
+              </SyntaxHighlighter>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.div>
     </div>
   );
 }
