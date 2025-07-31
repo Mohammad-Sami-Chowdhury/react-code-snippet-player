@@ -1,138 +1,201 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Themes } from "./Themes";
+import { Resizable } from "re-resizable";
 
-const styles = {
-  wrapper: {
-    width: "100%",
-    maxWidth: "900px",
-  },
-  codeEditorContainer: {
-    backgroundColor: "#111",
-    borderRadius: "12px",
-    width: "100%",
-    padding: "0",
-    margin: "0 auto",
-    border: "1px solid #333",
-    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.5)",
-    overflow: "hidden",
-  },
-  innerContainer: {
-    width: "100%",
-    padding: "0",
-    backgroundColor: "#1a1a1a",
-  },
-  tabsWrapper: {
-    padding: "0.5rem 1rem",
-    backgroundColor: "#111",
-    borderBottom: "1px solid #222",
-    position: "relative",
-    overflow: "hidden",
-  },
-  tabsContainer: {
-    display: "flex",
-    gap: "0.5rem",
-    overflowX: "auto",
-    whiteSpace: "nowrap",
-    scrollbarWidth: "thin",
-    scrollbarColor: "#444 transparent",
-    paddingBottom: "4px",
-  },
-  tabButton: {
-    padding: "0.5rem 1rem",
-    fontSize: "0.85rem",
-    borderRadius: "6px",
-    fontWeight: "500",
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    cursor: "pointer",
-    userSelect: "none",
-    backgroundColor: "#252525",
-    border: "none",
-    color: "#aaa",
-    transition: "all 0.2s ease",
-    minWidth: "fit-content",
-    flexShrink: 0,
-  },
-  tabButtonActive: {
-    backgroundColor: "#3a3a3a",
-    color: "#00ffaa",
-  },
-  tabIcon: {
-    fontSize: "1rem",
-  },
-  tabLabel: {
-    display: "inline",
-  },
-  codeDisplayContainer: {
-    position: "relative",
-  },
-  scrollShadow: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: "30px",
-    background: "linear-gradient(90deg, transparent, #111)",
-    pointerEvents: "none",
-  },
-};
+const TabBar = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.25rem;
+  position: relative;
 
-const detectLanguage = (tabId, language) => {
-  if (language) return language;
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #1d262f;
+    border-radius: 3px;
+  }
+  scrollbar-width: thin;
+  scrollbar-color: #1d262f transparent;
+`;
 
-  const languageMap = {
-    sql: ["sql", "postgresql", "dbms", "database"],
-    typescript: ["typescript", "ts"],
-    tsx: ["nextjs", "next.js", "react"],
-    javascript: ["javascript", "js", "express", "redux"],
-    dockerfile: ["docker"],
-    bash: ["aws", "cli"],
-    json: ["json"],
-  };
+const TabButton = styled.button`
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #3f3f46;
+  border-radius: 5px;
+  background: #1f1d2b;
+  color: #bbbbbbff;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
-  const lowerId = tabId.toLowerCase();
-  for (const [lang, keywords] of Object.entries(languageMap)) {
-    if (keywords.some((keyword) => lowerId.includes(keyword))) {
-      return lang === "typescript" ? "ts" : lang === "tsx" ? "tsx" : lang;
-    }
+  &:hover {
+    background-color: #00ff9948;
+    color: #ffffff;
+    border-color: #00ff99;
   }
 
-  return "javascript";
-};
+  ${(props) =>
+    props.active &&
+    `
+    color: #00FF99;
+    border-color: #00FF99;
+  `}
+`;
+
+const Toolbar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+`;
+
+const ToolbarBtns = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const SelectContainer = styled.div`
+  position: relative;
+  width: 180px;
+  user-select: none;
+`;
+
+const Selected = styled.div`
+  background: #1f1d2b;
+  color: #00ff99;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #00ff99;
+  cursor: pointer;
+  font-size: 0.875rem;
+`;
+
+const OptionsList = styled(motion.ul)`
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.25rem 0;
+  background: #1f1d2b;
+  border: 1px solid #00ff99;
+  border-radius: 6px;
+  list-style: none;
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #1d262f;
+    border-radius: 3px;
+  }
+  scrollbar-width: thin;
+  scrollbar-color: #1d262f transparent;
+`;
+
+const OptionItem = styled.li`
+  padding: 0.5rem 1rem;
+  color: #00ff99;
+  cursor: pointer;
+
+  &:hover {
+    background: #00ff9948;
+    color: #fff;
+  }
+`;
+
+const ToolbarBtn = styled.button`
+  background: #1f1d2b;
+  color: #00ff99;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #00ff99;
+  font-size: 0.875rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background-color: #00ff9948;
+    color: #ffffff;
+    border-color: #00ff99;
+  }
+`;
+
+const EditorResize = styled(Resizable)`
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: "Inter", sans-serif;
+  background-color: #13111c;
+  border-radius: 5px;
+  border: 1px solid #00ff99;
+`;
+
+const EditorBox = styled(motion.div)`
+  position: relative;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #00ff99;
+    border-radius: 3px;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: #00ff99 transparent;
+`;
 
 export default function CodeSnippetPlayer({
   tabs = [],
-  theme = duotoneDark,
-  autoSwitch = true,
+  autoSwitch: initialAutoSwitch = true,
   typingSpeed = 20,
   switchDelay = 2000,
   showLineNumbers = true,
 }) {
   const [activeTabId, setActiveTabId] = useState(tabs[0]?.id || null);
   const [typedIndex, setTypedIndex] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(1024);
-  const [showScrollShadow, setShowScrollShadow] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [themeKey, setThemeKey] = useState("duotoneDark");
+  const [theme, setTheme] = useState(duotoneDark);
+  const [autoSwitch, setAutoSwitch] = useState(initialAutoSwitch);
+  const [isOpen, setIsOpen] = useState(false);
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
-  useEffect(() => {
-    setTypedIndex(0);
-  }, [activeTab]);
+  useEffect(() => setTypedIndex(0), [activeTab]);
 
   useEffect(() => {
-    if (!activeTab) return;
-
+    if (!activeTab || !isPlaying) return;
     if (typedIndex < activeTab.code.length) {
       const timeout = setTimeout(
         () => setTypedIndex(typedIndex + 1),
@@ -155,107 +218,116 @@ export default function CodeSnippetPlayer({
     activeTabId,
     switchDelay,
     typingSpeed,
+    isPlaying,
   ]);
 
-  const getResponsiveStyle = () => {
-    const isMobile = windowWidth < 640;
-    const isTablet = windowWidth < 1024;
-
-    return {
-      padding: isMobile ? "1rem" : "1.5rem",
-      fontSize: isMobile ? "0.8rem" : "0.9rem",
-      height: isMobile ? "300px" : "400px",
-      margin: 0,
-      overflow: "auto",
-      backgroundColor: "#1a1a1a",
+  const detectLanguage = (tabId, language) => {
+    if (language) return language;
+    const map = {
+      sql: ["sql", "postgresql", "dbms"],
+      ts: ["typescript"],
+      tsx: ["react", "next"],
+      js: ["javascript", "express"],
+      bash: ["cli"],
+      json: ["json"],
     };
+    const lowerId = tabId.toLowerCase();
+    for (const [lang, keys] of Object.entries(map)) {
+      if (keys.some((k) => lowerId.includes(k))) return lang;
+    }
+    return "javascript";
   };
 
-  const getResponsiveStyles = () => {
-    const isMobile = windowWidth < 640;
-
-    return {
-      tabButton: {
-        ...styles.tabButton,
-        padding: isMobile ? "0.4rem 0.8rem" : "0.5rem 1rem",
-        fontSize: isMobile ? "0.75rem" : "0.85rem",
-      },
-      tabIcon: {
-        ...styles.tabIcon,
-        fontSize: isMobile ? "0.9rem" : "1rem",
-      },
-    };
+  const handleCopy = () => {
+    if (!activeTab) return;
+    navigator.clipboard.writeText(activeTab.code);
   };
 
-  const responsiveStyles = getResponsiveStyles();
+  const handleThemeSelect = (key) => {
+    setThemeKey(key);
+    setTheme(Themes[key] || duotoneDark);
+    setIsOpen(false);
+  };
 
-  if (!activeTab) return <div>No tabs provided</div>;
+  if (!activeTab)
+    return (
+      <div style={{ textAlign: "center", color: "#999" }}>No tabs provided</div>
+    );
 
   return (
-    <div style={styles.wrapper}>
-      <motion.div
-        style={styles.codeEditorContainer}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div style={styles.innerContainer}>
-          <div style={styles.tabsWrapper}>
-            <div
-              style={styles.tabsContainer}
-              ref={(el) => {
-                if (el) {
-                  setShowScrollShadow(el.scrollWidth > el.clientWidth);
-                }
-              }}
-            >
-              {tabs.map((tab) => (
-                <motion.button
-                  key={tab.id}
-                  onClick={() => setActiveTabId(tab.id)}
-                  style={{
-                    ...styles.tabButton,
-                    ...responsiveStyles.tabButton,
-                    ...(activeTabId === tab.id && styles.tabButtonActive),
-                  }}
-                  whileHover={{
-                    backgroundColor: "#333",
-                    color: "#00ffaa",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span style={responsiveStyles.tabIcon}>{tab.icon}</span>
-                  <span style={styles.tabLabel}>{tab.label}</span>
-                </motion.button>
-              ))}
-            </div>
-            {showScrollShadow && <div style={styles.scrollShadow} />}
-          </div>
+    <EditorResize defaultSize={{ width: "100%", height: 400 }} minHeight={200}>
+      <TabBar>
+        {tabs.map((tab) => (
+          <TabButton
+            key={tab.id}
+            onClick={() => setActiveTabId(tab.id)}
+            active={activeTabId === tab.id}
+          >
+            <span className="tab-icon">{tab.icon}</span>
+            {tab.label}
+          </TabButton>
+        ))}
+      </TabBar>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTabId}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              style={styles.codeDisplayContainer}
-            >
-              <SyntaxHighlighter
-                language={detectLanguage(activeTab.id, activeTab.language)}
-                style={theme}
-                customStyle={getResponsiveStyle()}
-                showLineNumbers={showLineNumbers}
-                wrapLines={true}
-                wrapLongLines={true}
-                lineNumberStyle={{ color: "#555", minWidth: "2.5em" }}
+      <Toolbar>
+        <SelectContainer>
+          <Selected onClick={() => setIsOpen(!isOpen)}>{themeKey}</Selected>
+          <AnimatePresence>
+            {isOpen && (
+              <OptionsList
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
               >
-                {activeTab.code.slice(0, typedIndex)}
-              </SyntaxHighlighter>
-            </motion.div>
+                {Object.keys(Themes).map((key) => (
+                  <OptionItem key={key} onClick={() => handleThemeSelect(key)}>
+                    {key}
+                  </OptionItem>
+                ))}
+              </OptionsList>
+            )}
           </AnimatePresence>
-        </div>
-      </motion.div>
-    </div>
+        </SelectContainer>
+
+        <ToolbarBtns>
+          <ToolbarBtn onClick={handleCopy}>Copy</ToolbarBtn>
+          <ToolbarBtn onClick={() => setIsPlaying((p) => !p)}>
+            {isPlaying ? "Pause" : "Play"}
+          </ToolbarBtn>
+          <ToolbarBtn onClick={() => setAutoSwitch((s) => !s)}>
+            {autoSwitch ? "Auto-Switch: ON" : "Auto-Switch: OFF"}
+          </ToolbarBtn>
+        </ToolbarBtns>
+      </Toolbar>
+
+      <AnimatePresence mode="wait">
+        <EditorBox
+          key={activeTabId}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <SyntaxHighlighter
+            language={detectLanguage(activeTab.id, activeTab.language)}
+            style={theme}
+            showLineNumbers={showLineNumbers}
+            wrapLines={true}
+            wrapLongLines={true}
+            customStyle={{
+              height: "100%",
+              overflow: "auto",
+              padding: "1.25rem",
+              fontSize: "0.875rem",
+              backgroundColor: "#09090b",
+            }}
+            lineNumberStyle={{ color: "#555" }}
+          >
+            {activeTab.code.slice(0, typedIndex)}
+          </SyntaxHighlighter>
+        </EditorBox>
+      </AnimatePresence>
+    </EditorResize>
   );
 }

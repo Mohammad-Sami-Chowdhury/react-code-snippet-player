@@ -3,23 +3,11 @@ import { SiTypescript, SiReact, SiNextdotjs } from "react-icons/si";
 import CodeSnippetPlayer from "./CodeSnippetsPlayer";
 import { Themes } from "./Themes";
 
-// Define styles as constants
-const styles = {
-  appContainer: {
-    height: "100vh",
-    backgroundColor: "#0b0a12",
-    color: "white",
-  },
-  icon: {
-    size: 24,
-  },
-};
-
 const tabs = [
   {
     id: "typescript",
     label: "TypeScript",
-    icon: <SiTypescript size={styles.icon.size} />,
+    icon: <SiTypescript />,
     language: "ts",
     code: `// TypeScript example
 function greet(name: string): string {
@@ -30,7 +18,7 @@ console.log(greet("Sami"));`,
   {
     id: "react",
     label: "React",
-    icon: <SiReact size={styles.icon.size} />,
+    icon: <SiReact />,
     language: "jsx",
     code: `// React example
 import React from "react";
@@ -42,7 +30,7 @@ export default function Hello() {
   {
     id: "nextjs",
     label: "Next.js",
-    icon: <SiNextdotjs size={styles.icon.size} />,
+    icon: <SiNextdotjs />,
     language: "tsx",
     code: `// Next.js example
 export default function Home() {
@@ -56,8 +44,6 @@ export default function App() {
     <div>
       <CodeSnippetPlayer
         tabs={tabs}
-        theme={Themes.xonokai}
-        autoSwitch={true}
         switchDelay={3000}
         typingSpeed={10}
       />
