@@ -4,7 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Themes } from "./Themes";
-import { Resizable } from "re-resizable";
+
+const Wrapper = styled.div`
+  width: 700px;
+  height: 500px;
+  background-color: #09090b;
+  border-radius: 5px;
+  padding: 1rem;
+`;
 
 const TabBar = styled.div`
   display: flex;
@@ -63,6 +70,8 @@ const Toolbar = styled.div`
   margin-bottom: 1rem;
   flex-wrap: wrap;
   gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #3f3f46;
 `;
 
 const ToolbarBtns = styled.div`
@@ -100,7 +109,7 @@ const OptionsList = styled(motion.ul)`
   z-index: 100;
   max-height: 200px;
   overflow-y: auto;
-  overflow-x: hidden
+  overflow-x: hidden;
   &::-webkit-scrollbar {
     height: 6px;
   }
@@ -117,7 +126,7 @@ const OptionsList = styled(motion.ul)`
 
 const OptionItem = styled.li`
   padding: 0.5rem 1rem;
-  color: #00ff99;
+  color: #bbbbbbff;
   cursor: pointer;
 
   &:hover {
@@ -142,16 +151,6 @@ const ToolbarBtn = styled.button`
     color: #ffffff;
     border-color: #00ff99;
   }
-`;
-
-const EditorResize = styled(Resizable)`
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
-  font-family: "Inter", sans-serif;
-  background-color: #13111c;
-  border-radius: 5px;
-  border: 1px solid #00ff99;
 `;
 
 const EditorBox = styled(motion.div)`
@@ -180,15 +179,32 @@ export default function CodeSnippetPlayer({
   autoSwitch: initialAutoSwitch = true,
   typingSpeed = 20,
   switchDelay = 2000,
-  showLineNumbers = true,
 }) {
+  const getInitialTheme = () => {
+    const savedTheme = localStorage.getItem("codeSnippetTheme");
+    return savedTheme || "duotoneDark";
+  };
+
+  const getInitialAutoSwitch = () => {
+    const saved = localStorage.getItem("codeSnippetAutoSwitch");
+    return saved ? saved === "true" : initialAutoSwitch;
+  };
+
+  const getInitialLineNumbers = () => {
+    const saved = localStorage.getItem("codeSnippetShowLineNumbers");
+    return saved ? saved === "true" : true;
+  };
+
   const [activeTabId, setActiveTabId] = useState(tabs[0]?.id || null);
   const [typedIndex, setTypedIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [themeKey, setThemeKey] = useState("duotoneDark");
-  const [theme, setTheme] = useState(duotoneDark);
-  const [autoSwitch, setAutoSwitch] = useState(initialAutoSwitch);
+  const [themeKey, setThemeKey] = useState(getInitialTheme());
+  const [theme, setTheme] = useState(Themes[getInitialTheme()] || duotoneDark);
+  const [autoSwitch, setAutoSwitch] = useState(getInitialAutoSwitch());
   const [isOpen, setIsOpen] = useState(false);
+  const [showLineNumbers, setShowLineNumbers] = useState(
+    getInitialLineNumbers()
+  );
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
@@ -247,6 +263,23 @@ export default function CodeSnippetPlayer({
     setThemeKey(key);
     setTheme(Themes[key] || duotoneDark);
     setIsOpen(false);
+    localStorage.setItem("codeSnippetTheme", key);
+  };
+
+  const toggleAutoSwitch = () => {
+    const newValue = !autoSwitch;
+    setAutoSwitch(newValue);
+    localStorage.setItem("codeSnippetAutoSwitch", newValue.toString());
+  };
+
+  const toggleLineNumbers = () => {
+    const newValue = !showLineNumbers;
+    setShowLineNumbers(newValue);
+    localStorage.setItem("codeSnippetShowLineNumbers", newValue.toString());
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
   };
 
   if (!activeTab)
@@ -255,7 +288,7 @@ export default function CodeSnippetPlayer({
     );
 
   return (
-    <EditorResize defaultSize={{ width: "100%", height: 400 }} minHeight={200}>
+    <Wrapper>
       <TabBar>
         {tabs.map((tab) => (
           <TabButton
@@ -292,11 +325,14 @@ export default function CodeSnippetPlayer({
 
         <ToolbarBtns>
           <ToolbarBtn onClick={handleCopy}>Copy</ToolbarBtn>
-          <ToolbarBtn onClick={() => setIsPlaying((p) => !p)}>
+          <ToolbarBtn onClick={togglePlayPause}>
             {isPlaying ? "Pause" : "Play"}
           </ToolbarBtn>
-          <ToolbarBtn onClick={() => setAutoSwitch((s) => !s)}>
+          <ToolbarBtn onClick={toggleAutoSwitch}>
             {autoSwitch ? "Auto-Switch: ON" : "Auto-Switch: OFF"}
+          </ToolbarBtn>
+          <ToolbarBtn onClick={toggleLineNumbers}>
+            {showLineNumbers ? "Hide" : "Show"} Line Numbers
           </ToolbarBtn>
         </ToolbarBtns>
       </Toolbar>
@@ -328,6 +364,6 @@ export default function CodeSnippetPlayer({
           </SyntaxHighlighter>
         </EditorBox>
       </AnimatePresence>
-    </EditorResize>
+    </Wrapper>
   );
 }

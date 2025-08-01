@@ -42,11 +42,7 @@ export default function Home() {
 export default function App() {
   return (
     <div>
-      <CodeSnippetPlayer
-        tabs={tabs}
-        switchDelay={3000}
-        typingSpeed={10}
-      />
+      <CodeSnippetPlayer tabs={tabs} switchDelay={3000} typingSpeed={10} />
     </div>
   );
 }
