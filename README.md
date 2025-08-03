@@ -78,44 +78,6 @@ export default function App() {
 }
 ```
 
-## Props
-
-**tabs**
-Type: Array
-Default: Required
-Description: Array of tab objects
-
-**theme**
-Type: Object
-Default: duotoneDark
-Description: Syntax highlighting theme
-
-**autoSwitch**
-Type: Boolean
-Default: false
-Description: Enable automatic tab switching
-
-**typingSpeed**
-Type: Number
-Default: 30
-Description: Typing animation speed in milliseconds
-
-**switchDelay**
-Type: Number
-Default: 10000
-Description: Delay between auto-switches in milliseconds
-
-**className**
-Type: String
-Default: ""
-Description: Additional CSS classes
-
-## 🎨 Themes
-
-```jsx
-<CodeSnippetPlayer tabs={tabs} theme={Themes.dracula} />
-```
-
 ## Custom Styling
 
 ```jsx

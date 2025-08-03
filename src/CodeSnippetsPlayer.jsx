@@ -5,6 +5,10 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Themes } from "./Themes";
 
+// Import Fira Code font for buttons and theme selector only
+import "@fontsource/fira-code/400.css";
+import "@fontsource/fira-code/500.css";
+
 const Wrapper = styled.div`
   width: 700px;
   height: 500px;
@@ -50,16 +54,16 @@ const TabButton = styled.button`
   gap: 0.5rem;
 
   &:hover {
-    background-color: #00ff9948;
+    background-color: ${(props) => props.primaryColor || "#00ff99"}48;
     color: #ffffff;
-    border-color: #00ff99;
+    border-color: ${(props) => props.primaryColor || "#00ff99"};
   }
 
   ${(props) =>
     props.active &&
     `
-    color: #00FF99;
-    border-color: #00FF99;
+    color: ${props.primaryColor || "#00ff99"};
+    border-color: ${props.primaryColor || "#00ff99"};
   `}
 `;
 
@@ -68,31 +72,52 @@ const Toolbar = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-  flex-wrap: wrap;
   gap: 0.75rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid #3f3f46;
+  min-height: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
 `;
 
 const ToolbarBtns = styled.div`
   display: flex;
   gap: 0.5rem;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const SelectContainer = styled.div`
   position: relative;
   width: 180px;
   user-select: none;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 180px;
+  }
 `;
 
 const Selected = styled.div`
   background: #1f1d2b;
-  color: #00ff99;
+  color: ${(props) => props.primaryColor || "#00ff99"};
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  border: 1px solid #00ff99;
+  border: 1px solid ${(props) => props.primaryColor || "#00ff99"};
   cursor: pointer;
   font-size: 0.875rem;
+  font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
+    "Consolas", monospace;
+  font-weight: 500;
 `;
 
 const OptionsList = styled(motion.ul)`
@@ -103,13 +128,14 @@ const OptionsList = styled(motion.ul)`
   margin: 0;
   padding: 0.25rem 0;
   background: #1f1d2b;
-  border: 1px solid #00ff99;
+  border: 1px solid ${(props) => props.primaryColor || "#00ff99"};
   border-radius: 6px;
   list-style: none;
   z-index: 100;
   max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
+
   &::-webkit-scrollbar {
     height: 6px;
   }
@@ -128,28 +154,40 @@ const OptionItem = styled.li`
   padding: 0.5rem 1rem;
   color: #bbbbbbff;
   cursor: pointer;
+  font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
+    "Consolas", monospace;
+  font-weight: 400;
 
   &:hover {
-    background: #00ff9948;
+    background: ${(props) => props.primaryColor || "#00ff99"}48;
     color: #fff;
   }
 `;
 
 const ToolbarBtn = styled.button`
   background: #1f1d2b;
-  color: #00ff99;
+  color: ${(props) => props.primaryColor || "#00ff99"};
   padding: 0.45rem 1rem;
   border-radius: 6px;
-  border: 1px solid #00ff99;
+  border: 1px solid ${(props) => props.primaryColor || "#00ff99"};
   font-size: 0.875rem;
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s ease;
+  font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
+    "Consolas", monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
 
   &:hover {
-    background-color: #00ff9948;
+    background-color: ${(props) => props.primaryColor || "#00ff99"}48;
     color: #ffffff;
-    border-color: #00ff99;
+    border-color: ${(props) => props.primaryColor || "#00ff99"};
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
   }
 `;
 
@@ -166,12 +204,12 @@ const EditorBox = styled(motion.div)`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #00ff99;
+    background-color: ${(props) => props.primaryColor || "#00ff99"};
     border-radius: 3px;
   }
 
   scrollbar-width: thin;
-  scrollbar-color: #00ff99 transparent;
+  scrollbar-color: ${(props) => props.primaryColor || "#00ff99"} transparent;
 `;
 
 export default function CodeSnippetPlayer({
@@ -179,6 +217,7 @@ export default function CodeSnippetPlayer({
   autoSwitch: initialAutoSwitch = true,
   typingSpeed = 20,
   switchDelay = 2000,
+  primaryColor = "#00ff99",
 }) {
   const getInitialTheme = () => {
     const savedTheme = localStorage.getItem("codeSnippetTheme");
@@ -295,6 +334,7 @@ export default function CodeSnippetPlayer({
             key={tab.id}
             onClick={() => setActiveTabId(tab.id)}
             active={activeTabId === tab.id}
+            primaryColor={primaryColor}
           >
             <span className="tab-icon">{tab.icon}</span>
             {tab.label}
@@ -304,7 +344,12 @@ export default function CodeSnippetPlayer({
 
       <Toolbar>
         <SelectContainer>
-          <Selected onClick={() => setIsOpen(!isOpen)}>{themeKey}</Selected>
+          <Selected
+            onClick={() => setIsOpen(!isOpen)}
+            primaryColor={primaryColor}
+          >
+            {themeKey}
+          </Selected>
           <AnimatePresence>
             {isOpen && (
               <OptionsList
@@ -312,9 +357,14 @@ export default function CodeSnippetPlayer({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
+                primaryColor={primaryColor}
               >
                 {Object.keys(Themes).map((key) => (
-                  <OptionItem key={key} onClick={() => handleThemeSelect(key)}>
+                  <OptionItem
+                    key={key}
+                    onClick={() => handleThemeSelect(key)}
+                    primaryColor={primaryColor}
+                  >
                     {key}
                   </OptionItem>
                 ))}
@@ -324,14 +374,16 @@ export default function CodeSnippetPlayer({
         </SelectContainer>
 
         <ToolbarBtns>
-          <ToolbarBtn onClick={handleCopy}>Copy</ToolbarBtn>
-          <ToolbarBtn onClick={togglePlayPause}>
+          <ToolbarBtn onClick={handleCopy} primaryColor={primaryColor}>
+            Copy
+          </ToolbarBtn>
+          <ToolbarBtn onClick={togglePlayPause} primaryColor={primaryColor}>
             {isPlaying ? "Pause" : "Play"}
           </ToolbarBtn>
-          <ToolbarBtn onClick={toggleAutoSwitch}>
+          <ToolbarBtn onClick={toggleAutoSwitch} primaryColor={primaryColor}>
             {autoSwitch ? "Auto-Switch: ON" : "Auto-Switch: OFF"}
           </ToolbarBtn>
-          <ToolbarBtn onClick={toggleLineNumbers}>
+          <ToolbarBtn onClick={toggleLineNumbers} primaryColor={primaryColor}>
             {showLineNumbers ? "Hide" : "Show"} Line Numbers
           </ToolbarBtn>
         </ToolbarBtns>
@@ -344,6 +396,7 @@ export default function CodeSnippetPlayer({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
+          primaryColor={primaryColor}
         >
           <SyntaxHighlighter
             language={detectLanguage(activeTab.id, activeTab.language)}
