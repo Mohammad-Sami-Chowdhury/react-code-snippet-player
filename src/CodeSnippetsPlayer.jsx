@@ -52,6 +52,8 @@ const TabButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
+    "Consolas", monospace;
 
   &:hover {
     background-color: ${(props) => props.primaryColor || "#00ff99"}48;

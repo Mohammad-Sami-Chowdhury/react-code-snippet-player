@@ -4,7 +4,7 @@ A beautiful, animated React component to display code snippets with elegant tabs
 
 ## Demo
 
-[Demo](https://codesandbox.io/p/sandbox/9tj38q?file=%2Fpackage.json%3A54%2C2)
+[Demo](https://codesandbox.io/p/sandbox/react-code-snippet-player-9tj38q)
 
 ## 🌟 Features
 
@@ -72,7 +72,12 @@ export default function Home() {
 export default function App() {
   return (
     <div>
-      <CodeSnippetPlayer tabs={tabs} switchDelay={3000} typingSpeed={10} />
+      <CodeSnippetPlayer
+        tabs={tabs}
+        switchDelay={3000}
+        typingSpeed={10}
+        primaryColor="#00ff99"
+      />
     </div>
   );
 }
