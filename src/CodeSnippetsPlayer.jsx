@@ -10,11 +10,26 @@ import "@fontsource/fira-code/400.css";
 import "@fontsource/fira-code/500.css";
 
 const Wrapper = styled.div`
-  width: 700px;
-  height: 500px;
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  min-height: 400px;
+  max-height: 500px;
   background-color: #09090b;
   border-radius: 5px;
   padding: 1rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    min-height: 350px;
+  }
+
+  @media (max-width: 480px) {
+    min-height: 300px;
+  }
 `;
 
 const TabBar = styled.div`
@@ -26,7 +41,7 @@ const TabBar = styled.div`
   position: relative;
 
   &::-webkit-scrollbar {
-    height: 6px;
+    height: 4px;
   }
   &::-webkit-scrollbar-track {
     background: transparent;
@@ -46,7 +61,7 @@ const TabButton = styled.button`
   background: #1f1d2b;
   color: #bbbbbbff;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   transition: all 0.2s ease-in-out;
   font-weight: 500;
   display: flex;
@@ -54,6 +69,8 @@ const TabButton = styled.button`
   gap: 0.5rem;
   font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
     "Consolas", monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
 
   &:hover {
     background-color: ${(props) => props.primaryColor || "#00ff99"}48;
@@ -67,6 +84,11 @@ const TabButton = styled.button`
     color: ${props.primaryColor || "#00ff99"};
     border-color: ${props.primaryColor || "#00ff99"};
   `}
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding: 0.3rem 0.7rem;
+  }
 `;
 
 const Toolbar = styled.div`
@@ -78,10 +100,9 @@ const Toolbar = styled.div`
   padding-bottom: 0.75rem;
   border-bottom: 1px solid #3f3f46;
   min-height: 40px;
+  flex-wrap: wrap;
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
     gap: 0.5rem;
   }
 `;
@@ -90,10 +111,12 @@ const ToolbarBtns = styled.div`
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-grow: 1;
 
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
-    justify-content: center;
+  @media (max-width: 480px) {
+    gap: 0.3rem;
   }
 `;
 
@@ -104,8 +127,13 @@ const SelectContainer = styled.div`
   flex-shrink: 0;
 
   @media (max-width: 768px) {
+    width: 150px;
+  }
+
+  @media (max-width: 480px) {
     width: 100%;
-    max-width: 180px;
+    max-width: 100%;
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -120,6 +148,14 @@ const Selected = styled.div`
   font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
     "Consolas", monospace;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 0.4rem 0.8rem;
+  }
 `;
 
 const OptionsList = styled(motion.ul)`
@@ -150,6 +186,10 @@ const OptionsList = styled(motion.ul)`
   }
   scrollbar-width: thin;
   scrollbar-color: #1d262f transparent;
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
 `;
 
 const OptionItem = styled.li`
@@ -159,6 +199,9 @@ const OptionItem = styled.li`
   font-family: "Fira Code", "JetBrains Mono", "Source Code Pro", "Monaco",
     "Consolas", monospace;
   font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     background: ${(props) => props.primaryColor || "#00ff99"}48;
@@ -169,10 +212,10 @@ const OptionItem = styled.li`
 const ToolbarBtn = styled.button`
   background: #1f1d2b;
   color: ${(props) => props.primaryColor || "#00ff99"};
-  padding: 0.45rem 1rem;
+  padding: 0.45rem 0.8rem;
   border-radius: 6px;
   border: 1px solid ${(props) => props.primaryColor || "#00ff99"};
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s ease;
@@ -188,14 +231,22 @@ const ToolbarBtn = styled.button`
   }
 
   @media (max-width: 768px) {
+    padding: 0.35rem 0.7rem;
     font-size: 0.75rem;
-    padding: 0.35rem 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
   }
 `;
 
 const EditorBox = styled(motion.div)`
   position: relative;
   width: 100%;
+  flex-grow: 1;
+  min-height: 300px;
+  overflow: hidden;
 
   &::-webkit-scrollbar {
     height: 6px;
@@ -208,10 +259,20 @@ const EditorBox = styled(motion.div)`
   &::-webkit-scrollbar-thumb {
     background-color: ${(props) => props.primaryColor || "#00ff99"};
     border-radius: 3px;
+  width: 50%;
+  margin: 0 auto;
   }
 
   scrollbar-width: thin;
   scrollbar-color: ${(props) => props.primaryColor || "#00ff99"} transparent;
+
+  @media (max-width: 768px) {
+    min-height: 250px;
+  }
+
+  @media (max-width: 480px) {
+    min-height: 200px;
+  }
 `;
 
 export default function CodeSnippetPlayer({
@@ -338,7 +399,7 @@ export default function CodeSnippetPlayer({
             active={activeTabId === tab.id}
             primaryColor={primaryColor}
           >
-            <span className="tab-icon">{tab.icon}</span>
+            {tab.icon && <span className="tab-icon">{tab.icon}</span>}
             {tab.label}
           </TabButton>
         ))}
@@ -383,10 +444,10 @@ export default function CodeSnippetPlayer({
             {isPlaying ? "Pause" : "Play"}
           </ToolbarBtn>
           <ToolbarBtn onClick={toggleAutoSwitch} primaryColor={primaryColor}>
-            {autoSwitch ? "Auto-Switch: ON" : "Auto-Switch: OFF"}
+            {autoSwitch ? "Auto: ON" : "Auto: OFF"}
           </ToolbarBtn>
           <ToolbarBtn onClick={toggleLineNumbers} primaryColor={primaryColor}>
-            {showLineNumbers ? "Hide" : "Show"} Line Numbers
+            {showLineNumbers ? "Hide #" : "Show #"}
           </ToolbarBtn>
         </ToolbarBtns>
       </Toolbar>
@@ -409,11 +470,12 @@ export default function CodeSnippetPlayer({
             customStyle={{
               height: "100%",
               overflow: "auto",
-              padding: "1.25rem",
-              fontSize: "0.875rem",
+              padding: "1rem",
+              fontSize: "0.8rem",
               backgroundColor: "#09090b",
+              margin: 0,
             }}
-            lineNumberStyle={{ color: "#555" }}
+            lineNumberStyle={{ color: "#555", minWidth: "2.5em" }}
           >
             {activeTab.code.slice(0, typedIndex)}
           </SyntaxHighlighter>

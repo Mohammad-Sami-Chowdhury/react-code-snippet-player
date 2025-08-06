@@ -364,7 +364,7 @@ server.listen().then(({ url }) => {
 export default function App() {
   return (
     <div style={styles.wrapper}>
-      <CodeSnippetPlayer tabs={tabs} switchDelay={3000} typingSpeed={10} primaryColor="#00ff99" />
+      <CodeSnippetPlayer tabs={tabs} switchDelay={3000} typingSpeed={10} primaryColor="#534538" />
     </div>
   );
 }
